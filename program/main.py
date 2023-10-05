@@ -1,41 +1,52 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from classMaille import Maille
-        
-def segmentation(x, y, nbr_echantillon):
-    tab = np.zeros( (nbr_echantillon,2) )
-    ii = 0
-    pas = int(len(x)/nbr_echantillon)
-    for i in range(0, nbr_echantillon-1, pas):
-        #echantillonage
-       tab[ii,0] = x[i*pas]
-       tab[ii,1] = y[i*pas]
-       tab[ii+1,0] = x[i*pas+1]
-       tab[ii+1,1] = y[i*pas+1]
-       ii += 2
+import os
+import ezdxf
+from classStent import Stent
 
-    #ajout connecteur 1
-    connecteur1 = np.array([[tab[-1,0], -0.55], [tab[-1,0], -0.25], [tab[-1,0], 0.3], [tab[-1,0], 0.6]])    
+def ecriture(stent):
+    #spécification de la version dxf
+    doc = ezdxf.new("R2010")
+
+    #Créer une nouvelle entité dans l'espace objet
+    msp = doc.modelspace() 
+
+    #Créer une ligne droite
+    for i in range(stent.tableau_maille.shape[0]):
+        for j in range(stent.tableau_maille.shape[1]):
+            
+            for ii in range(0,stent.tableau_maille[i,j].tab_maille.shape[0]-1,2):   
+                msp.add_line(start=[stent.tableau_maille[i,j].tab_maille[ii,0],stent.tableau_maille[i,j].tab_maille[ii,1]], end=[stent.tableau_maille[i,j].tab_maille[ii+1,0],stent.tableau_maille[i,j].tab_maille[ii+1,1]])
+
+            for jj in range(len(stent.tableau_maille[i,j].tab_connecteur)):
+                for p in range(0,len(stent.tableau_maille[i,j].tab_connecteur[jj][:,0])-1, 2):
+                    msp.add_line(start=[stent.tableau_maille[i,j].tab_connecteur[jj][p,0],stent.tableau_maille[i,j].tab_connecteur[jj][p,1]], end=[stent.tableau_maille[i,j].tab_connecteur[jj][p+1,0],stent.tableau_maille[i,j].tab_connecteur[jj][p+1,1]])
+                                   
+                    
+    #sauvegarder
+    doc.saveas('export/stent.dxf')
+    print("fichier exporté")
     
-    #ajout connecteur 2
-    connecteur2 = np.array([[2*np.pi/3, -0.55], [2*np.pi/3, -0.75], [2*np.pi/3, -1], [2*np.pi/3, -1.3]])    
+def principale(chemin, longueur):
+    
+    data = np.genfromtxt(chemin, delimiter=',', skip_header = 1)
+    dossier = os.path.dirname(chemin) + "/connecteur/"
 
-    return tab, connecteur1, connecteur2
+    if os.path.exists(dossier):
+        nom_fichier = []
+        for fichier in os.listdir(dossier):
+            chemin_fichier = os.path.join(dossier, fichier)
+            if os.path.isfile(chemin_fichier):
+                nom_fichier.append(chemin_fichier)
+                  
+        stent1 = Stent(data, nom_fichier, longueur)
+        #stent1.Affichage()
+        ecriture(stent1)
+        
+    else:
+        print("Le dossier n'existe pas.")
+        
+   
 
-
-def principale():
-    x = np.linspace(0, np.pi, 1000)
-    a = 0.55
-    y = a * np.sin(6*x - np.pi/2)
-
-    connecteur = np.zeros( (2,4, 2) )
-    liste, connecteur[0,:,:], connecteur[1,:,:] = segmentation(x, y, 500)
-
-    maille1 = Maille()
-    maille1.setTab(liste, connecteur)
-
-    plt.plot(maille1.tab[:,0], maille1.tab[:,1], "+")
-    plt.plot(x,y)
-    plt.show()
-
-principale()
+    
+principale("c:/Users/hamri/OneDrive/Bureau/projet stent/mailles/TERUMO/Synergy/DIAMETRE 3/maille_bezier_curve_data.csv",3)
