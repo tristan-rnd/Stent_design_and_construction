@@ -1,63 +1,134 @@
 import numpy as np
-import matplotlib.pyplot as plt
+import os
+
 
 class Maille:
+    '''
+    une maille est un tableau numpy a 2D 
+    1ere colonne = valeur x
+    2eme colonne = valeur y
+    nbr de lignes = nbr de points
+    '''
     def __init__(self):
-        #coordonnes particulieres
-        self.x_fin = 0
-        self.y_fin = 0
-        self.x_debut = 0
-        self.y_debut = 0
-
-        #tablau des coordonnees de la maille
-        self.tab_maille = np.zeros( (2,2) )
-
-        self.tab_connecteur = []
+        #valeur particuilere 
+        self.largeur = 0
+        self.longueur = 0
+        self.longueur_c = 0 #longueur entre le bas de la maille et le 1er connecteur
         
-    def SetTab(self, tab, fichier):
-        #redimensionnement des tableaux
-        self.tab_maille = np.zeros( (len(tab[:,0]), 2) )
-        self.tab_connecteur = []
-        
-        #initialisation
-        self.tab_maille[:,:] = tab[:,:]
+        #tablau des coordonnees des point de la maille
+        self.tab_maille_point = np.zeros( (2,2) )
 
-        indice_x_fin = np.argmax(self.tab_maille[:,1])
-        indice_x_debut = np.argmin(self.tab_maille[:,1])
+        #liste des coordonnees des connecteurs
+        self.liste_connecteurs = [] #liste de tableau
         
-        self.x_fin = self.tab_maille[indice_x_fin, 0]
-        self.y_fin = self.tab_maille[indice_x_fin, 1]
-        self.x_debut = self.tab_maille[indice_x_debut, 0]
-        self.y_debut = self.tab_maille[indice_x_debut, 1]
+        #liste des coordonnees des aretes
+        self.liste_aretes = [] #liste de liste de tuple. une liste = 2 tuples; 1 tuples = coordonnees (x, y)
+        
+        
+    def SetTab(self, type_maille):
+        #redimensionnement et initialisation de la maille
+        tab = np.genfromtxt(type_maille, delimiter=',', skip_header = 1)
+        self.tab_maille_point = np.zeros( (len(tab[:,0]), 2) )
+        self.tab_maille_point[:,:] = tab[:,:]
 
-        if type(fichier[0]) == type(" "):
-            for i in range(len(fichier)):
-                data = np.genfromtxt(fichier[i], delimiter=',', skip_header = 1)
-                self.tab_connecteur.append(data)
+        #recupere les fichier des connecteurs
+        dossier = os.path.dirname(type_maille) + "/connecteur/"
+        if os.path.exists(dossier):
+            nom_fichier = []
+            for fichier in os.listdir(dossier):
+                chemin_fichier = os.path.join(dossier, fichier)
+                if os.path.isfile(chemin_fichier):
+                    nom_fichier.append(chemin_fichier)
         else:
-            for i in range(len(fichier)):
-                self.tab_connecteur.append(fichier[i])
-        
-    def Translation(self):
-        #calcule translation sur x et y 
-        x_translation = abs(np.max(self.tab_connecteur[0][:,0]) - np.max(self.tab_connecteur[1][:,0]))
-        y_translation = abs(np.max(self.tab_connecteur[0][:,1]) - np.max(self.tab_connecteur[1][:,1]))
+            print("Le dossier n'existe pas.")
 
+        if len(nom_fichier) == 4:
+            x_largeur_f = 0
+            x_largeur_d = 0
+            y_longueur_d = 0
+            y_longueur_f = 0
+            y_longueur_dd = 0
+            y_longueur_df = 0
+            for i in range(len(nom_fichier)):
+                #initialisation connecteur
+                tab_connecteur = np.genfromtxt(nom_fichier[i], delimiter=',', skip_header = 1)
+                self.liste_connecteurs.append(tab_connecteur)
+                for j in range(0, len(self.liste_connecteurs[i][:,0])-1, 2):
+                    #debut arrete
+                    x_debut = self.liste_connecteurs[i][j,0]
+                    y_debut = self.liste_connecteurs[i][j,1]
+
+                    #fin arrete
+                    x_fin = self.liste_connecteurs[i][j+1,0]
+                    y_fin = self.liste_connecteurs[i][j+1,1]
+
+                    #ajout a la liste d'arrete
+                    self.liste_aretes.append([ (x_debut, y_debut),(x_fin, y_fin) ])
+
+                #calcul longueur et largeur de maille
+                nom_fichier_connecteur = os.path.basename(os.path.normpath(nom_fichier[i]))
+                if nom_fichier_connecteur == 'Connecteur_bas.csv':
+                    y_longueur_f = self.liste_connecteurs[-1][-1,1]
+                    
+                elif nom_fichier_connecteur == 'Connecteur_droit.csv':
+                    x_largeur_f = self.liste_aretes[-1][-1][0]
+                    y_longueur_dd = self.liste_aretes[-1][0][1]
+                    
+                elif nom_fichier_connecteur == 'Connecteur_gauche.csv':
+                    x_largeur_d = self.liste_aretes[-1][0][0]
+                    y_longueur_df = self.liste_aretes[-1][0][1]
+                    
+                elif nom_fichier_connecteur == 'Connecteur_haut.csv':
+                    y_longueur_d = self.liste_aretes[-1][0][1] 
+                    
+            self.largeur =  abs(x_largeur_f - x_largeur_d)
+            self.longueur = abs(y_longueur_f - y_longueur_d)
+            self.longueur_c = abs(y_longueur_df - y_longueur_dd)        
+        
+
+        #initialisation de la liste d'arrete
+        for i in range(len(self.tab_maille_point[:,0])-1):
+            #debut arrete
+            x_debut = self.tab_maille_point[i,0]
+            y_debut = self.tab_maille_point[i,1]
+
+            #fin arrete
+            x_fin = self.tab_maille_point[i+1,0]
+            y_fin = self.tab_maille_point[i+1,1]
+
+            #ajout a la liste d'arrete
+            self.liste_aretes.append([ (x_debut, y_debut),(x_fin, y_fin) ])
+            
+        
+        
+    def XYTranslation(self):
+        
         #mise a jour position maille
-        self.tab_maille[:,0] = self.tab_maille[:,0] + x_translation
-        self.tab_maille[:,1] = self.tab_maille[:,1] + y_translation
+        self.tab_maille_point[:,0] = self.tab_maille_point[:,0] + self.largeur
+        self.tab_maille_point[:,1] = self.tab_maille_point[:,1] + self.longueur_c
 
         #mise a jour position connecteur
-        for i in range(len(self.tab_connecteur)):
-            self.tab_connecteur[i][:,0] = self.tab_connecteur[i][:,0] + x_translation
-            self.tab_connecteur[i][:,1] = self.tab_connecteur[i][:,1] + y_translation
+        for i in range(len(self.liste_connecteurs)):
+            self.liste_connecteurs[i][:,0] = self.liste_connecteurs[i][:,0] + self.largeur
+            self.liste_connecteurs[i][:,1] = self.liste_connecteurs[i][:,1] + self.longueur_c
+
+        #mise a jour des aretes
+        for i in range(len(self.liste_aretes)):
+            self.liste_aretes[i][0] = (self.liste_aretes[i][0][0] + self.largeur, self.liste_aretes[i][0][1] + self.longueur_c)
+            self.liste_aretes[i][1] = (self.liste_aretes[i][1][0] + self.largeur, self.liste_aretes[i][1][1] + self.longueur_c)
+        
             
     def YTranslation(self):
-        y_translation = abs(self.y_debut - self.y_fin)
-        self.tab_maille[:,1] = self.tab_maille[:,1] + y_translation
+        #mise a jour position maille
+        self.tab_maille_point[:,1] = self.tab_maille_point[:,1] + self.longueur
 
-        for i in range(len(self.tab_connecteur)):
-            self.tab_connecteur[i][:,1] = self.tab_connecteur[i][:,1] + y_translation
-        
+        #mise a jour position connecteur
+        for i in range(len(self.liste_connecteurs)):
+            self.liste_connecteurs[i][:,1] = self.liste_connecteurs[i][:,1] + self.longueur
+
+        #mise a jour des aretes
+        for i in range(len(self.liste_aretes)):
+            self.liste_aretes[i][0] = (self.liste_aretes[i][0][0], self.liste_aretes[i][0][1] + self.longueur)
+            self.liste_aretes[i][1] = (self.liste_aretes[i][1][0], self.liste_aretes[i][1][1] + self.longueur)
         
     
