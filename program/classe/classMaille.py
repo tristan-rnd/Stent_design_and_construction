@@ -53,7 +53,7 @@ class Maille:
                 #initialisation connecteur
                 tab_connecteur = np.genfromtxt(nom_fichier[i], delimiter=',', skip_header = 1)
                 self.liste_connecteurs.append(tab_connecteur)
-                for j in range(0, len(self.liste_connecteurs[i][:,0])-1, 2):
+                for j in range(len(self.liste_connecteurs[i][:,0]), 2):
                     #debut arrete
                     x_debut = self.liste_connecteurs[i][j,0]
                     y_debut = self.liste_connecteurs[i][j,1]
