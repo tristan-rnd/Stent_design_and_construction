@@ -1,20 +1,23 @@
-from classe.classStent import Stent
-from igeswrite import Iges
-
-def ecriture(stent):
-    "Ecriture d'un fichier IGES a partir des aretes"
-
-    doc = Iges()
-    for arete in stent.liste_aretes:
-        doc.line((arete[0][0],arete[0][1],0),(arete[1][0],arete[1][1],0))
-
-    doc.write("stent.iges")
-    print("fichier exporté")
-       
-def principale(chemin, longueur):    
-    stent1 = Stent( chemin, 2,longueur)
-    #stent1.Affichage()
-    ecriture(stent1)     
-   
+from classStent import Stent
+import argparse
     
-principale('/workspaces/Stent_design_and_construction/Mailles/Terumo/Synergy/Maille.csv',3)
+def principale(chemin, longueur):
+    nbr_couronne = 8
+    diametre = 3
+    stent1 = Stent(chemin, nbr_couronne ,longueur, diametre)
+    stent1.Affichage()
+    stent1.PrintCaracteristique()
+    stent1.ecriture()
+    
+principale("c:/Users/hamri/OneDrive/Bureau/projet_stent/mailles/TERUMO/Synergy/DIAMETRE_3/Maille.csv", 9)  
+'''
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description="main file")
+    parser.add_argument("-l","--longueur",type=int,default=1)
+    parser.add_argument("-p","--path",type=str,default="r")
+    args = parser.parse_args()
+    principale(chemin=args.path,longueur=args.longueur)
+'''
+
+
