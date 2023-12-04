@@ -7,10 +7,10 @@ class Stent:
     '''
     le stent est une liste de liste ou chaque liste correspond a une couronne
     '''
-    def __init__(self, type_maille, nbr_couronne, longueur):
+    def __init__(self, type_maille, nbr_couronne, longueur, diametre):
         self.constructeur = type_maille.split('/')[-4]
         self.model = type_maille.split('/')[-3]
-        self.diametre = type_maille.split('/')[-2]
+        self.diametre = diametre
         self.liste_couronne = []
         self.liste_aretes_total = []
         self.liste_aretes = []
@@ -22,7 +22,7 @@ class Stent:
                 fin = True
              
             couronne = Couronne(self)
-            couronne.SetCouronne(type_maille, fin)
+            couronne.SetCouronne(type_maille, fin, longueur, diametre)
             self.liste_couronne.append(couronne) 
             
             if i != 0:  
