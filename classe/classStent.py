@@ -1,22 +1,28 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from classe.classCouronne import Couronne
-        
+from classCouronne import Couronne
+from igeswrite import Iges
+
 class Stent:
     '''
     le stent est une liste de liste ou chaque liste correspond a une couronne
     '''
     def __init__(self, type_maille, nbr_couronne, longueur):
-        self.constructeur = type_maille.split('/')[-3]
-        self.model = type_maille.split('/')[-2]
+        self.constructeur = type_maille.split('/')[-4]
+        self.model = type_maille.split('/')[-3]
+        self.diametre = type_maille.split('/')[-2]
         self.liste_couronne = []
         self.liste_aretes_total = []
         self.liste_aretes = []
         
-        #creation du stent 
+        #creation du stent
+        fin = False #si on est à la fin du stent pour eviter de mettre les connecteurs
         for i in range(nbr_couronne):
+            if i == (nbr_couronne - 1):
+                fin = True
+             
             couronne = Couronne(self)
-            couronne.SetCouronne(type_maille)
+            couronne.SetCouronne(type_maille, fin)
             self.liste_couronne.append(couronne) 
             
             if i != 0:  
@@ -49,25 +55,36 @@ class Stent:
 
     def Affichage(self):
         
-        fig1 = plt.subplot(2, 1, 1)
+        #fig1 = plt.subplot(2, 1, 1)
         for i in range(len(self.liste_couronne)):
             for j in range(len(self.liste_couronne[i].liste_maille)):
                 #affichage maille
-                fig1.plot(self.liste_couronne[i].liste_maille[j].tab_maille_point[:,0], self.liste_couronne[i].liste_maille[j].tab_maille_point[:,1])
-                #plt.plot(self.liste_couronne[i].liste_maille[j].tab_maille_point[:,0], self.liste_couronne[i].liste_maille[j].tab_maille_point[:,1])
+                #fig1.plot(self.liste_couronne[i].liste_maille[j].tab_maille_point[:,0], self.liste_couronne[i].liste_maille[j].tab_maille_point[:,1])
+                plt.plot(self.liste_couronne[i].liste_maille[j].tab_maille_point[:,0], self.liste_couronne[i].liste_maille[j].tab_maille_point[:,1])
 
                 for ii in range(len(self.liste_couronne[i].liste_maille[j].liste_connecteurs)):
                     #affichage connecteur
-                    fig1.plot(self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii][:,0], self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii][:,1])
-                    #plt.plot(self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii][:,0], self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii][:,1])
+                    #fig1.plot(self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii][:,0], self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii][:,1])
+                    if (len(self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii])!=0):
+                        plt.plot(self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii][:,0], self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii][:,1])
 
-                 
+        '''         
         fig2 = plt.subplot(2, 1, 2)
         for i in range(len(self.liste_aretes)):
             x = [self.liste_aretes[i][0][0], self.liste_aretes[i][1][0] ]
             y = [self.liste_aretes[i][0][1], self.liste_aretes[i][1][1] ]
             fig2.plot(x, y)
-        
+        '''
         plt.show()
+
+    def ecriture(self):
+        "Ecriture d'un fichier IGES a partir des aretes"
+
+        doc = Iges()
+        for arete in self.liste_aretes:
+            doc.line((arete[0][0],arete[0][1],0),(arete[1][0],arete[1][1],0))
+
+        doc.write("stent.iges")
+        print("fichier exporté")
 
     

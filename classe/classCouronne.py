@@ -1,4 +1,4 @@
-from classe.classMaille import Maille
+from classMaille import Maille
 
 class Couronne:
     '''
@@ -9,11 +9,11 @@ class Couronne:
         self.liste_maille = []
         self.liste_aretes_couronne = []
         
-    def SetCouronne(self, type_maille):
+    def SetCouronne(self, type_maille, fin):
         def couronnes(nbr_maille):
             for i in range(nbr_maille):
                 maille = Maille()
-                maille.SetTab(type_maille)
+                maille.SetTab(type_maille, fin)
                 self.liste_maille.append(maille)
                 if i != 0:
                     self.liste_maille[-1].YTranslation()
