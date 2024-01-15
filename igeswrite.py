@@ -1,5 +1,7 @@
 
 import sys, math
+from collections import deque
+
 
 def hollerith(s):
     return "{}H{}".format(len(s), s)
@@ -8,15 +10,37 @@ def hollerith(s):
 class Iges:
 
     def __init__(self):
-        self.buffer = { 'D':"", 'P':"" }
-        self.lineno= { 'D':0, 'P':0 }
+        #self.buffer = { 'D':"", 'P':"" }
+        self.buffer = ["","","",""]
+        self.buffer_D = deque([""])
+        self.buffer_P = deque([""])
+        #self.lineno= { 'D':0, 'P':0 }
+        self.lineno= [0,0,0,0]
 
+    def get_section(self, section):
+        if section == "D":
+            return 0
+        elif section == "P":
+            return 1
+        elif section == "S":
+            return 2
+        elif section == "G":
+            return 3
+        
     def add_line(self, section, line, index=""):
         index = str(index)
-        self.lineno[section] += 1
-        lineno = self.lineno[section]
+        self.lineno[self.get_section(section)] += 1
+        lineno = self.lineno[self.get_section(section)]
         buf = "{:64s}{:>8s}{}{:7d}\n".format(line, index, section, lineno)
-        self.buffer[section] += buf
+        self.buffer[self.get_section(section)] += buf
+        
+    def add_lineP(self, line, index=""):
+        index = str(index)
+        self.lineno[1] += 1
+        lineno = self.lineno[1]
+        buf = "{:64s}{:>8s}{}{:7d}\n".format(line, index, "P", lineno)
+        self.buffer_P.append(buf)
+            
 
     def update(self, section, params, index=""):
         line = None
@@ -30,15 +54,28 @@ class Iges:
                 self.add_line(section, line + ',', index=index)
                 line = s
         self.add_line(section, line + ';', index=index)
+        
+    def updateP(self, params, index=""):
+        line = None
+        for s in params:
+            s = str(s)
+            if line is None:
+                line = s
+            elif len(line + s) + 1 < 64:
+                line += "," + s
+            else:
+                self.add_lineP(line + ',', index=index)
+                line = s
+        self.add_lineP(line + ';', index=index)
 
     def start_section(self, comment=""):
-        self.buffer["S"] = ""
-        self.lineno["S"] = 0
+        self.buffer[self.get_section("S")] = ""
+        self.lineno[self.get_section("S")] = 0
         self.update("S", [comment])
 
     def global_section(self, filename=""):
-        self.buffer["G"] = ""
-        self.lineno["G"] = 0
+        self.buffer[self.get_section("G")] = ""
+        self.lineno[self.get_section("G")] = 0
         self.update("G", [
             "1H,",       # 1  parameter delimiter 
             "1H;",       # 2  record delimiter 
@@ -70,15 +107,15 @@ class Iges:
     def entity(self, code, params, label="", child=False):
         code = str(code)
         status = "00010001" if child else "1"
-        dline = self.lineno["D"] + 1
-        pline = self.lineno["P"] + 1
-        self.buffer['D'] += (
+        dline = self.lineno[0] + 1
+        pline = self.lineno[1] + 1
+        self.buffer_D.append((
             "{:>8s}{:8d}{:8d}{:8d}{:8d}{:8d}{:8d}{:8d}{:>8s}D{:7d}\n".format(
             code, pline, 0, 0, 0, 0, 0, 0, status, dline) +
             "{:>8s}{:8d}{:8d}{:8d}{:8d}{:8d}{:8d}{:8s}{:8d}D{:7d}\n".format(
-            code, 1, 0, 1, 0, 0, 0, label, 0, dline + 1))
-        self.update("P", [code] + list(params), index=dline)
-        self.lineno["D"] = dline + 1
+            code, 1, 0, 1, 0, 0, 0, label, 0, dline + 1)))
+        self.updateP([code] + list(params), index=dline)
+        self.lineno[0] = dline + 1
         return dline
 
     def pos(self, pt, origin):
@@ -115,13 +152,13 @@ class Iges:
         self.start_section()
         self.global_section(filename)
         f = open(filename, "w") if filename else sys.stdout
-        f.write(self.buffer['S'])
-        f.write(self.buffer['G'])
-        f.write(self.buffer['D'])
-        f.write(self.buffer['P'])
+        f.write(self.buffer[2])
+        f.write(self.buffer[3])
+        f.write("".join(self.buffer_D))
+        f.write("".join(self.buffer_P))
         f.write("S{:7d}G{:7d}D{:7d}P{:7d}{:40s}T{:7d}\n".format(
-            self.lineno['S'], self.lineno['G'], 
-            self.lineno['D'], self.lineno['P'], "", 1))
+            self.lineno[2], self.lineno[3], 
+            self.lineno[0], self.lineno[1], "", 1))
         if filename: f.close()
 
     def line(self, start, end, origin=(0,0,0), child=False):
