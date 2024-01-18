@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import csv
+import os
 from classCouronne import Couronne
 from igeswrite import Iges
 
@@ -68,15 +70,45 @@ class Stent:
 
         plt.show()      
         
+    def ecriture_CSV(self):
+        #creation du dossier
+        nom = "export/Stent_" + str(self.constructeur) + "_" + str(self.model) + "_" + str(self.diametre) + "_" + str(self.longueur)
+        if not os.path.exists(nom):
+            os.makedirs(nom)
+                
+        #ecriture dans un fichier csv des arretes du stent
+        with open(nom + "/segment_data.csv", 'w', newline='') as csv_file:
+            csv_writer = csv.writer(csv_file)
+            csv_writer.writerow([['X1', 'Y1'], ['X2', 'Y2']])
 
+            for arrete in self.liste_aretes_total:
+                csv_writer.writerow([arrete[0][0], arrete[0][1], arrete[1][0],arrete[1][1]])
+
+        #ecriture dans un fichier des csv des points du stent
+        with open(nom + "/point_data.csv", 'w', newline='') as csv_file:
+            csv_writer = csv.writer(csv_file)
+            csv_writer.writerow([['X', 'Y']])
+
+            for i in range(len(self.liste_couronne)):
+                for j in range(len(self.liste_couronne[i].liste_maille)):
+                    csv_writer.writerow([self.liste_couronne[i].liste_maille[j].tab_maille_point[:,0], self.liste_couronne[i].liste_maille[j].tab_maille_point[:,1]])
+
+                    for ii in range(len(self.liste_couronne[i].liste_maille[j].liste_connecteurs)):
+                        if (len(self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii])!=0):
+                            csv_writer.writerow([self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii][:,0], self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii][:,1]])
+                            
     def ecriture(self):
         "Ecriture d'un fichier IGES a partir des aretes"
         doc = Iges()
         for arete in self.liste_aretes:
             doc.line((arete[0][0],arete[0][1],0),(arete[1][0],arete[1][1],0))
 
-        nom = "Stent_" + str(self.constructeur) + "_" + str(self.model) + "_" + str(self.diametre) + "_" + str(self.longueur) + ".iges"
-        doc.write("export/"+nom)
+        #creation du dossier
+        nom = "export/Stent_" + str(self.constructeur) + "_" + str(self.model) + "_" + str(self.diametre) + "_" + str(self.longueur)+"/"
+        if not os.path.exists(nom):
+            os.makedirs(nom)
+                
+        doc.write(nom+"stent.iges")
         print("fichier exporté")
 
     

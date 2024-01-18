@@ -10,7 +10,15 @@ def fenetre():
     # Configuration de la fenêtre principale
     fenetre = tk.Tk()
     fenetre.title("Creation du stent")
-
+    fenetre.geometry("300x300")
+    fenetre.resizable(False, False)
+    
+    # Image en arriere plan
+    image = "fond.png"
+    image = tk.PhotoImage(file=image)
+    image_label = tk.Label(image=image)
+    image_label.place(relwidth=1, relheight=1)
+    
     # Étiquette pour afficher le chemin du fichier sélectionné
     fichier_label = tk.Label(fenetre, text="")
     fichier_label.pack(padx=10, pady=10)
@@ -57,7 +65,7 @@ def demander_longueur():
 # Fonction pour demander à l'utilisateur d'entrer le diametre en mm
 def demander_diametre():
     global diametre_label, ok_bouton
-    diametre_mm = simpledialog.askinteger("Diamètre en mm", "Entrez le diamètre en mm :")
+    diametre_mm = simpledialog.askfloat("Diamètre en mm", "Entrez le diamètre en mm :")
     if diametre_mm is not None:
         diametre_label.config(text=f"Diamètre : {diametre_mm} mm")
         activer_bouton_ok()
@@ -77,7 +85,7 @@ def action_ok():
     longueur = longueur_label.cget("text")
     longueur = int(longueur.split(":")[1].strip().split("mm")[0])
     diametre = diametre_label.cget("text")
-    diametre = int(diametre.split(":")[1].strip().split("mm")[0])
+    diametre = float(diametre.split(":")[1].strip().split("mm")[0])
     principale(fichier, longueur, diametre)
 
 def stent_fini():
@@ -97,8 +105,9 @@ def stent_fini():
 def principale(chemin, longueur, diametre):
     nbr_couronne = 8
     stent1 = Stent(chemin, nbr_couronne, longueur, diametre)
-    stent1.Affichage()
+    #stent1.Affichage()
     stent1.PrintCaracteristique()
+    stent1.ecriture_CSV()
     stent1.ecriture()
     stent_fini()
 

@@ -37,7 +37,7 @@ class Maille:
         self.ex = longueur / (8*abs(np.max(tab[:,0])-np.min(tab[:,0])))
 
         #y
-        self.ey = np.pi() * diametre / abs(np.max(tab[:,1])-np.min(tab[:,1]))
+        self.ey = np.pi * diametre / abs(np.max(tab[:,1])-np.min(tab[:,1]))
 
         self.tab_maille_point[:,0] = self.tab_maille_point[:,0] * self.ex
         self.tab_maille_point[:,1] = self.tab_maille_point[:,1] * self.ey
@@ -63,7 +63,9 @@ class Maille:
             for i in range(len(nom_fichier)):
                 #initialisation connecteur
                 tab_connecteur = np.genfromtxt(nom_fichier[i], delimiter=',', skip_header = 1)
-
+                tab_connecteur[:,0] = tab_connecteur[:,0]*self.ex
+                tab_connecteur[:,1] = tab_connecteur[:,1]*self.ey
+                
                 #calcul longueur et largeur de maille
                 nom_fichier_connecteur = os.path.basename(os.path.normpath(nom_fichier[i]))
                 if nom_fichier_connecteur == 'Connecteur_bas.csv':
