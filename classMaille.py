@@ -39,7 +39,7 @@ class Maille:
         self.ex = longueur / (nbr_couronne*(abs(np.max(tab[:,0])-np.min(tab[:,0])) + abs(np.max(tab_connecteur[:,0])-np.min(tab_connecteur[:,0])) ))
 
         #y
-        self.ey = np.pi * diametre / (abs(np.max(tab[:,1])-np.min(tab[:,1])) + abs(np.max(tab_connecteur[:,1])-np.min(tab_connecteur[:,1])) )
+        self.ey = np.pi * diametre / abs(np.max(tab[:,1])-np.min(tab[:,1]))
 
         self.tab_maille_point[:,0] = self.tab_maille_point[:,0] * self.ex
         self.tab_maille_point[:,1] = self.tab_maille_point[:,1] * self.ey
