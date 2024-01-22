@@ -121,7 +121,7 @@ def principale(chemin, longueur, diametre):
     constructeur = chemin.split("/")[-3]
 
     #   TERUMO
-    if constructeur == "TERUMO":
+    if constructeur == "Terumo":
         if longueur in [9.0, 12, 15, 18, 21, 24, 28, 33, 38, 44, 50]:
             if diametre in [2.0, 2.25, 2.50, 3.0, 3.50, 4.0, 4.5]:
                 if 2.0 <= diametre <= 3.0:
