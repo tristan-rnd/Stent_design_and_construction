@@ -25,19 +25,21 @@ class Maille:
         self.liste_aretes = [] #liste de liste de tuple. une liste = 2 tuples; 1 tuples = coordonnees (x, y)
         
         
-    def SetTab(self, type_maille, fin, longueur, diametre):
+    def SetTab(self, type_maille, fin, longueur, diametre, nbr_couronne):
         
         #redimensionnement et initialisation de la maille
         tab = np.genfromtxt(type_maille, delimiter=',', skip_header = 1)
         self.tab_maille_point = np.zeros( (len(tab[:,0]), 2) )
         self.tab_maille_point[:,:] = tab[:,:]
-
+        
         #calcul echelle
+        tab_connecteur = np.genfromtxt(os.path.dirname(type_maille) + "/connecteur/Connecteur_droit.csv", delimiter=',', skip_header = 1)
+        
         #x
-        self.ex = longueur / (8*abs(np.max(tab[:,0])-np.min(tab[:,0])))
+        self.ex = longueur / (nbr_couronne*(abs(np.max(tab[:,0])-np.min(tab[:,0])) + abs(np.max(tab_connecteur[:,0])-np.min(tab_connecteur[:,0])) ))
 
         #y
-        self.ey = np.pi * diametre / abs(np.max(tab[:,1])-np.min(tab[:,1]))
+        self.ey = np.pi * diametre / (abs(np.max(tab[:,1])-np.min(tab[:,1])) + abs(np.max(tab_connecteur[:,1])-np.min(tab_connecteur[:,1])) )
 
         self.tab_maille_point[:,0] = self.tab_maille_point[:,0] * self.ex
         self.tab_maille_point[:,1] = self.tab_maille_point[:,1] * self.ey

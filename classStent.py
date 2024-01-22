@@ -25,7 +25,7 @@ class Stent:
                 fin = True
              
             couronne = Couronne(self)
-            couronne.SetCouronne(type_maille, fin, longueur, diametre)
+            couronne.SetCouronne(type_maille, fin, longueur, diametre, nbr_couronne)
             self.liste_couronne.append(couronne) 
             
             if i != 0:  

@@ -102,8 +102,48 @@ def stent_fini():
     # Lancement de la boucle principale Tkinter
     fenetre.mainloop()
 
+def erreur(msg):
+    # Création de la fenêtre 
+    fenetre = tk.Tk()
+    fenetre.title("Erreur")
+
+    # Création d'un widget Label (étiquette) pour afficher le texte
+    etiquette = tk.Label(fenetre, text=msg)
+
+    # Placement du widget Label dans la fenêtre
+    etiquette.pack(padx=10, pady=10)
+
+    # Lancement de la boucle principale Tkinter
+    fenetre.mainloop()
+    
 def principale(chemin, longueur, diametre):
-    nbr_couronne = 8
+    model = chemin.split("/")[-2]
+    constructeur = chemin.split("/")[-3]
+
+    #   TERUMO
+    if constructeur == "TERUMO":
+        if longueur in [9.0, 12, 15, 18, 21, 24, 28, 33, 38, 44, 50]:
+            if diametre in [2.0, 2.25, 2.50, 3.0, 3.50, 4.0, 4.5]:
+                if 2.0 <= diametre <= 3.0:
+                    nbr_couronne = 8
+                        
+                if 3.5 <= diametre <= 4.5:
+                    nbr_couronne = 10
+                    
+            else:
+                erreur("Le diametre ne fait pas partie des diametres autorises")
+                return 0 # return pour arreter l'execution de la fonction
+        else:
+            erreur("La longueur ne fait pas partie des longueurs autorisees")
+            return 0
+
+        
+    #   AUTRES CONSTRUCTEURS    #
+    #
+    #
+    #
+    #   AUTRES CONSTRUCTEURS    #
+    
     stent1 = Stent(chemin, nbr_couronne, longueur, diametre)
     #stent1.Affichage()
     stent1.PrintCaracteristique()
