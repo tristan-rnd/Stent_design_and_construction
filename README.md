@@ -10,6 +10,7 @@ Le but de ce projet est de combiner les mailles du projet précédent en couronn
 ## Utilisation
 
 L'arbre des répertoires est important à respecter pour le fonctionnement du programme.
+
 Le dossier principal contenant les fichiers utilisés est le dossier parent "Mailles", le sous dossier suivant correspond au nom du manufacturier (ex : Terumo) et le sous dossier suivant correspond au nom du modèle (ex : Synergy).
 Dans ce dernier répertoire doit se trouver le fichier contenant les points de la maille (format .csv). On y retrouve également le sous dossier "connecteur" qui doit obligatoirement contenir les 4 connecteurs de la maille (haut, droit, bas, gauche au format .csv).
 
@@ -34,4 +35,6 @@ python .\no-gui.py Terumo Ultimaster_Nagomi 3.5 24
 
 ## Ajout de modèle
 Pour ajouter un nouveau modèle, il faut ajouter dans le sous répertoire correspondant (Mailles/Constructeur/Modèle/) le fichier des points de la maille (ils sont considérés connectés deux à deux : le point de la ligne 1 forme une arête avec le point de la ligne 2) et ses 4 connecteurs.
-Ensuite, dans le code source, dans le constructeur de la classe Stent (\__init__) ajouter les indications du nombre de couronnes en fonction du fabricant/modèle/diamètre/longueur (voir implémentation existante pour quelques modèles du fabricant Terumo). Puis faire de même dans la classe Couronne pour indiquer le nombre de mailles par couronne en fonction du fabricant/modèle/diamètre/longueur (voir implémentation existante pour quelques modèles du fabricant Terumo).
+
+Ensuite, dans le code source, dans le constructeur de la classe Stent (\__init__) ajouter les indications du nombre de couronnes en fonction du fabricant/modèle/diamètre/longueur (voir implémentation existante pour quelques modèles du fabricant Terumo).
+Puis faire de même dans la classe Couronne pour indiquer le nombre de mailles par couronne en fonction du fabricant/modèle/diamètre/longueur (voir implémentation existante pour quelques modèles du fabricant Terumo).
