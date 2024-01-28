@@ -25,27 +25,30 @@ class Maille:
         self.liste_aretes = [] #liste de liste de tuple. une liste = 2 tuples; 1 tuples = coordonnees (x, y)
         
         
-    def SetTab(self, type_maille, fin, longueur, diametre, nbr_couronne):
+    def SetTab(self, constructeur, modele, fin, longueur, diametre, nbr_couronne, nbr_maille):
         
+        path = '/Mailles/' + constructeur + '/' + modele + '/'
+        path = os.path.normpath(os.getcwd() + path)
         #redimensionnement et initialisation de la maille
-        tab = np.genfromtxt(type_maille, delimiter=',', skip_header = 1)
+        for x in os.listdir(path):
+            if x.endswith(".csv"):
+                tab = np.genfromtxt(os.path.normpath(path+'/'+x), delimiter=',', skip_header = 1)
         self.tab_maille_point = np.zeros( (len(tab[:,0]), 2) )
         self.tab_maille_point[:,:] = tab[:,:]
-        
         #calcul echelle
-        tab_connecteur = np.genfromtxt(os.path.dirname(type_maille) + "/connecteur/Connecteur_droit.csv", delimiter=',', skip_header = 1)
+        tab_connecteur = np.genfromtxt(os.path.normpath(path+"/connecteur/Connecteur_droit.csv"), delimiter=',', skip_header = 1)
         
         #x
         self.ex = longueur / (nbr_couronne*(abs(np.max(tab[:,0])-np.min(tab[:,0])) + abs(np.max(tab_connecteur[:,0])-np.min(tab_connecteur[:,0])) ))
 
         #y
-        self.ey = np.pi * diametre / abs(np.max(tab[:,1])-np.min(tab[:,1]))
+        self.ey = np.pi * diametre / (nbr_maille*abs(np.max(tab[:,1])-np.min(tab[:,1])))
 
         self.tab_maille_point[:,0] = self.tab_maille_point[:,0] * self.ex
         self.tab_maille_point[:,1] = self.tab_maille_point[:,1] * self.ey
         
         #recupere les fichier des connecteurs
-        dossier = os.path.dirname(type_maille) + "/connecteur/"
+        dossier = os.path.normpath(path+"/connecteur")
         if os.path.exists(dossier):
             nom_fichier = []
             for fichier in os.listdir(dossier):
@@ -54,7 +57,6 @@ class Maille:
                     nom_fichier.append(chemin_fichier)
         else:
             print("Le dossier n'existe pas.")
-
         if len(nom_fichier) == 4:
             x_largeur_f = 0
             x_largeur_d = 0
@@ -128,7 +130,7 @@ class Maille:
                     
             self.largeur =  abs(x_largeur_f - x_largeur_d)
             self.longueur = abs(y_longueur_f - y_longueur_d)
-            self.longueur_c = abs(y_longueur_cf - y_longueur_cd)        
+            self.longueur_c = abs(y_longueur_cf - y_longueur_cd)   
         
 
         #initialisation de la liste d'arrete
@@ -164,18 +166,18 @@ class Maille:
             self.liste_aretes[i][1] = (self.liste_aretes[i][1][0] + self.largeur, self.liste_aretes[i][1][1] + self.longueur_c)
         
             
-    def YTranslation(self):
+    def YTranslation(self, t):
         #mise a jour position maille
-        self.tab_maille_point[:,1] = self.tab_maille_point[:,1] + self.longueur
+        self.tab_maille_point[:,1] = self.tab_maille_point[:,1] + self.longueur * t
 
         #mise a jour position connecteur
         for i in range(len(self.liste_connecteurs)):
             if (len(self.liste_connecteurs[i])!=0):
-                self.liste_connecteurs[i][:,1] = self.liste_connecteurs[i][:,1] + self.longueur
+                self.liste_connecteurs[i][:,1] = self.liste_connecteurs[i][:,1] + self.longueur * t
 
         #mise a jour des aretes
         for i in range(len(self.liste_aretes)):
-            self.liste_aretes[i][0] = (self.liste_aretes[i][0][0], self.liste_aretes[i][0][1] + self.longueur)
-            self.liste_aretes[i][1] = (self.liste_aretes[i][1][0], self.liste_aretes[i][1][1] + self.longueur)
+            self.liste_aretes[i][0] = (self.liste_aretes[i][0][0], self.liste_aretes[i][0][1] + self.longueur * t)
+            self.liste_aretes[i][1] = (self.liste_aretes[i][1][0], self.liste_aretes[i][1][1] + self.longueur * t)
         
     

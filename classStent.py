@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
 import csv
 import os
 from classCouronne import Couronne
@@ -9,9 +8,35 @@ class Stent:
     '''
     le stent est une liste de liste ou chaque liste correspond a une couronne
     '''
-    def __init__(self, type_maille, nbr_couronne, longueur, diametre):
-        self.constructeur = type_maille.split('/')[-3]
-        self.model = type_maille.split('/')[-2]
+    def __init__(self, constructeur, modele, longueur, diametre):
+        
+        #   TERUMO
+        if constructeur == "Terumo" and modele in ["Synergy", "Ultimaster_Nagomi", "Ultimaster_Tansei"]:
+            if longueur in [9, 12, 15, 18, 21, 24, 28, 33, 38, 44, 50]:
+                if diametre in [2.0, 2.25, 2.50, 3.0, 3.50, 4.0, 4.5]:
+                    if 2.0 <= diametre <= 3.0:
+                        nbr_couronne = 8
+                            
+                    if 3.5 <= diametre <= 4.5:
+                        nbr_couronne = 10
+                        
+                else:
+                    raise Exception("Le diamètre ne fait pas partie des diamètres autorisés.\n Le diamètre choisi était : {}".format(diametre))
+            else:
+                raise Exception("La longueur ne fait pas partie des longueurs autorisées.\n La longueur choisie était : {}".format(longueur))
+
+        else:
+            raise Exception('Le constructeur et/ou le modele n\'existe pas.\n Le constructeur choisi était : {}\n Le modèle choisi était : {}'.format(constructeur, modele))
+
+            
+        #   AUTRES CONSTRUCTEURS    #
+        #
+        #
+        #
+        #   AUTRES CONSTRUCTEURS    #
+        
+        self.constructeur = constructeur
+        self.model = modele
         self.diametre = diametre
         self.longueur = longueur
         self.liste_couronne = []
@@ -24,8 +49,8 @@ class Stent:
             if i == (nbr_couronne - 1):
                 fin = True
              
-            couronne = Couronne(self)
-            couronne.SetCouronne(type_maille, fin, longueur, diametre, nbr_couronne)
+            couronne = Couronne()
+            couronne.SetCouronne(constructeur, modele, fin, longueur, diametre, nbr_couronne)
             self.liste_couronne.append(couronne) 
             
             if i != 0:  
@@ -54,7 +79,7 @@ class Stent:
         print("stent créé")
         
     def PrintCaracteristique(self):
-        print("le manufacturier est: ", self.constructeur, "\nle model est: ", self.model, "\nle diametre est: ", self.diametre)
+        print("Le manufacturier est: ", self.constructeur, "\nLe model est: ", self.model, "\nLe diametre est: ", self.diametre,"\nLa longueur est: ", self.longueur)
 
     def Affichage(self):
         
@@ -72,12 +97,13 @@ class Stent:
         
     def ecriture_CSV(self):
         #creation du dossier
-        nom = "export/Stent_" + str(self.constructeur) + "_" + str(self.model) + "_" + str(self.diametre) + "_" + str(self.longueur)
-        if not os.path.exists(nom):
-            os.makedirs(nom)
+        nom = "Stent_" + str(self.constructeur) + "_" + str(self.model) + "_" + str(self.diametre) + "_" + str(self.longueur)
+        path = "export/" + nom + "/"
+        if not os.path.exists(path):
+            os.makedirs(path)
                 
         #ecriture dans un fichier csv des arretes du stent
-        with open(nom + "/segment_data.csv", 'w', newline='') as csv_file:
+        with open(path + nom + "_segments.csv", 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerow([['X1', 'Y1'], ['X2', 'Y2']])
 
@@ -85,7 +111,7 @@ class Stent:
                 csv_writer.writerow([arrete[0][0], arrete[0][1], arrete[1][0],arrete[1][1]])
 
         #ecriture dans un fichier des csv des points du stent
-        with open(nom + "/point_data.csv", 'w', newline='') as csv_file:
+        with open(path + nom + "_points.csv", 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerow([['X', 'Y']])
 
@@ -104,11 +130,12 @@ class Stent:
             doc.line((arete[0][0],arete[0][1],0),(arete[1][0],arete[1][1],0))
 
         #creation du dossier
-        nom = "export/Stent_" + str(self.constructeur) + "_" + str(self.model) + "_" + str(self.diametre) + "_" + str(self.longueur)+"/"
-        if not os.path.exists(nom):
-            os.makedirs(nom)
+        nom = "Stent_" + str(self.constructeur) + "_" + str(self.model) + "_" + str(self.diametre) + "_" + str(self.longueur)
+        path = "export/"+nom+"/"
+        if not os.path.exists(path):
+            os.makedirs(path)
                 
-        doc.write(nom+"stent.iges")
+        doc.write(path+nom+".iges")
         print("fichier exporté")
 
     

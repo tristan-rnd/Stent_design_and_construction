@@ -1,20 +1,14 @@
-
-import sys, math
-from collections import deque
-
+import sys
 
 def hollerith(s):
     return "{}H{}".format(len(s), s)
 
-
 class Iges:
 
     def __init__(self):
-        #self.buffer = { 'D':"", 'P':"" }
         self.buffer = ["","","",""]
-        self.buffer_D = deque([""])
-        self.buffer_P = deque([""])
-        #self.lineno= { 'D':0, 'P':0 }
+        self.buffer_D = [""]
+        self.buffer_P = [""]
         self.lineno= [0,0,0,0]
 
     def get_section(self, section):
@@ -129,23 +123,6 @@ class Iges:
         if centery: y -= h / 2
         return x, y, z
 
-    def mapping(self, points, origin):
-        start = points[-1]
-        refs = []
-        for p in points:
-            refs.append(self.line(start, p, origin, child=True))
-            start = p
-        return self.entity(102, [len(refs)] + refs, child=True) 
-
-    def surface(self, directrix, vector, points, origin):
-        surface = self.entity(122, [directrix] + list(vector), child=True)
-        mapping = self.mapping(points, origin)
-        curve = self.entity(142, [1, surface, 0, mapping, 2], child=True)
-        self.entity(144, [surface, 1, 0, curve])
-
-    def cylinder(self, directrix, vector, origin):
-        self.entity(120, [directrix, vector, 0, 2 * math.pi])
-
     ################
 
     def write(self, filename=None):
@@ -165,73 +142,4 @@ class Iges:
         start = self.pos(start, origin)
         end = self.pos(end, origin)
         return self.entity(110, start + end, child=child)
-
-    def xzplane(self, size, origin=(0,0,0)):
-        w, h = size
-        x, y, z = origin
-        points = [(w, 0, 0), (w, 0, h), (0, 0, h), (0, 0, 0)]
-        directrix = self.line((0, 0, 0), (w, 0, 0), origin, child=True)
-        self.surface(directrix, (x, y, z + h), points, origin)
-
-    def yzplane(self, size, origin=(0,0,0)):
-        w, h = size
-        x, y, z = origin
-        points = [(0, w, 0), (0, w, h), (0, 0, h), (0, 0, 0)]
-        directrix = self.line((0, 0, 0), (0, w, 0), origin, child=True)
-        self.surface(directrix, (x, y, z + h), points, origin)
-
-    def plane(self, size, origin=(0,0,0), **kw):
-        w, h = size
-        x, y, z = origin = self.origin(size, origin, **kw)
-        points = [(w, 0, 0), (w, h, 0), (0, h, 0), (0, 0, 0)]
-        directrix = self.line((0, 0, 0), (w, 0, 0), origin, child=True)
-        self.surface(directrix, (x, y + h, z), points, origin)
-
-    def wedge(self, w, h, origin=(0,0,0), flipx=False):
-        x, y, z = origin
-        if flipx: w, x = -w, x + w
-        origin = x, y, z
-        points = [(0, 0, 0), (w, 0, 0), (w, h, 0)]
-        directrix = self.line((0, 0, 0), (w, 0, 0), origin, child=True)
-        self.surface(directrix, (x, y + h, z), points, origin)
-
-    def cube(self, size, origin=(0,0,0)):
-        w, l, h = size
-        x, y, z = origin
-        self.plane((w, l), origin=origin)
-        self.plane((w, l), origin=(x, y, z + h))
-        self.yzplane((l, h), origin=origin)
-        self.yzplane((l, h), origin=(x + w, y, z))
-        self.xzplane((w, h), origin=origin)
-        self.xzplane((w, h), origin=(x, y + l, z))
-
-    def yslabline(self, length, rad, origin=(0,0,0)):
-        directrix = self.line((0, 0, 0), (0, 1, 0), origin, child=True)
-        vector = self.line((0, 0, 0), (0, 0, rad), origin, child=True)
-        self.cylinder(directrix, vector, origin)
-        vector = self.line((0, length, 0), (0, length, rad), origin, child=True)
-        self.cylinder(directrix, vector, origin)
-        vector = self.line((0, 0, rad), (0, length, rad), origin, child=True)
-        self.cylinder(directrix, vector, origin)
-
-    def xslabline(self, length, rad, origin=(0,0,0)):
-        directrix = self.line((0, 0, 0), (1, 0, 0), origin, child=True)
-        vector = self.line((0, 0, 0), (0, 0, rad), origin, child=True)
-        self.cylinder(directrix, vector, origin)
-        vector = self.line((length, 0, 0), (length, 0, rad), origin, child=True)
-        self.cylinder(directrix, vector, origin)
-        vector = self.line((0, 0, rad), (length, 0, rad), origin, child=True)
-        self.cylinder(directrix, vector, origin)
-
-    def ypipe(self, length, rad, origin=(0,0,0)):
-        directrix = self.line((0, 0, 0), (0, 1, 0), origin, child=True)
-        vector = self.line((0, 0, rad), (0, length, rad), origin, child=True)
-        self.cylinder(directrix, vector, origin)
-
-    def xpipe(self, length, rad, origin=(0,0,0)):
-        directrix = self.line((0, 0, 0), (1, 0, 0), origin, child=True)
-        vector = self.line((0, 0, rad), (length, 0, rad), origin, child=True)
-        self.cylinder(directrix, vector, origin)
-
-
 
