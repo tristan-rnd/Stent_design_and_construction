@@ -1,3 +1,10 @@
+# --------------------------------------------------------------------------------
+# Auteurs : Nassim HAMRI & Tristan RENAUD
+# Date : Janvier 2024
+# 
+# Ce fichier est partie intégrante de Stent_design_and_construction écrit par les mêmes auteurs.
+# --------------------------------------------------------------------------------
+
 from classMaille import Maille
 
 class Couronne:
@@ -28,8 +35,8 @@ class Couronne:
             couronnes(2)
         elif modele in liste_modele_3_mailles:
             couronnes(3)
-        # AUTRE NOMBRE DE MAILLES #
+        # AUTRES NOMBRE DE MAILLES #
         #                         #
         #                         #
-        # AUTRE NOMBRE DE MAILLES #
+        # AUTRES NOMBRE DE MAILLES #
             
