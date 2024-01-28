@@ -1,3 +1,12 @@
+# --------------------------------------------------------------------------------
+# Auteurs : Nassim HAMRI & Tristan RENAUD
+# Date : Janvier 2024
+# 
+# Ce fichier est partie intégrante de Stent_design_and_construction écrit par les mêmes auteurs.
+#
+# Il a été adapté librement du travail de @roseengineering disponible ici https://github.com/roseengineering/igeswrite
+# --------------------------------------------------------------------------------
+
 import sys
 
 def hollerith(s):
