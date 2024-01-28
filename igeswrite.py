@@ -7,7 +7,7 @@
 # Il a été adapté librement du travail de @roseengineering disponible ici https://github.com/roseengineering/igeswrite
 # --------------------------------------------------------------------------------
 
-import sys
+import sys, os
 
 def hollerith(s):
     return "{}H{}".format(len(s), s)
@@ -134,18 +134,17 @@ class Iges:
 
     ################
 
-    def write(self, filename=None):
+    def write(self, path, filename):
         self.start_section()
         self.global_section(filename)
-        f = open(filename, "w") if filename else sys.stdout
-        f.write(self.buffer[2])
-        f.write(self.buffer[3])
-        f.write("".join(self.buffer_D))
-        f.write("".join(self.buffer_P))
-        f.write("S{:7d}G{:7d}D{:7d}P{:7d}{:40s}T{:7d}\n".format(
-            self.lineno[2], self.lineno[3], 
-            self.lineno[0], self.lineno[1], "", 1))
-        if filename: f.close()
+        with open(path + filename, 'w') as f:
+            f.write(self.buffer[2])
+            f.write(self.buffer[3])
+            f.write("".join(self.buffer_D))
+            f.write("".join(self.buffer_P))
+            f.write("S{:7d}G{:7d}D{:7d}P{:7d}{:40s}T{:7d}\n".format(
+                self.lineno[2], self.lineno[3], 
+                self.lineno[0], self.lineno[1], "", 1))
 
     def line(self, start, end, origin=(0,0,0), child=False):
         start = self.pos(start, origin)

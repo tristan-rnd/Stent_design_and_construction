@@ -35,8 +35,13 @@ class Couronne:
             couronnes(2)
         elif modele in liste_modele_3_mailles:
             couronnes(3)
-        # AUTRES NOMBRE DE MAILLES #
-        #                         #
-        #                         #
-        # AUTRES NOMBRE DE MAILLES #
+            
+        # AUTRES NOMBRE DE MAILLES
+        # 
+        # ex : Si Boston_scientific & diamètre >=4 alors couronnes = 4
+        #
+        # if constructeur == Boston_scientific and diametre >= 4:
+        #     couronnes(4)
+        #                         
+        # AUTRES NOMBRE DE MAILLES
             

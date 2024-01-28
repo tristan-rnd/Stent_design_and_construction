@@ -34,16 +34,15 @@ class Maille:
         
     def SetTab(self, constructeur, modele, fin, longueur, diametre, nbr_couronne, nbr_maille):
         
-        path = '/Mailles/' + constructeur + '/' + modele + '/'
-        path = os.path.normpath(os.getcwd() + path)
+        path = os.path.join(os.getcwd(),'Mailles',constructeur,modele)
         #redimensionnement et initialisation de la maille
         for x in os.listdir(path):
             if x.endswith(".csv"):
-                tab = np.genfromtxt(os.path.normpath(path+'/'+x), delimiter=',', skip_header = 1)
+                tab = np.genfromtxt(os.path.normpath(os.path.join(path,x)), delimiter=',', skip_header = 1)
         self.tab_maille_point = np.zeros( (len(tab[:,0]), 2) )
         self.tab_maille_point[:,:] = tab[:,:]
         #calcul echelle
-        tab_connecteur = np.genfromtxt(os.path.normpath(path+"/connecteur/Connecteur_droit.csv"), delimiter=',', skip_header = 1)
+        tab_connecteur = np.genfromtxt(os.path.normpath(os.path.join(path,"connecteur","Connecteur_droit.csv")), delimiter=',', skip_header = 1)
         
         #x
         self.ex = longueur / (nbr_couronne*(abs(np.max(tab[:,0])-np.min(tab[:,0])) + abs(np.max(tab_connecteur[:,0])-np.min(tab_connecteur[:,0])) ))
@@ -55,7 +54,7 @@ class Maille:
         self.tab_maille_point[:,1] = self.tab_maille_point[:,1] * self.ey
         
         #recupere les fichier des connecteurs
-        dossier = os.path.normpath(path+"/connecteur")
+        dossier = os.path.normpath(os.path.join(path,"connecteur"))
         if os.path.exists(dossier):
             nom_fichier = []
             for fichier in os.listdir(dossier):

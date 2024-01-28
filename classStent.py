@@ -83,7 +83,7 @@ class Stent:
                 tuples_deja_vus.add(ensemble_de_tuples)
          
             
-        print("stent créé")
+        print("Stent créé")
         
     def PrintCaracteristique(self):
         print("Le manufacturier est: ", self.constructeur, "\nLe model est: ", self.model, "\nLe diametre est: ", self.diametre,"\nLa longueur est: ", self.longueur)
@@ -105,7 +105,7 @@ class Stent:
     def ecriture_CSV(self):
         #creation du dossier
         nom = "Stent_" + str(self.constructeur) + "_" + str(self.model) + "_" + str(self.diametre) + "_" + str(self.longueur)
-        path = "export/" + nom + "/"
+        path = os.path.join("export",nom,"")
         if not os.path.exists(path):
             os.makedirs(path)
                 
@@ -138,11 +138,11 @@ class Stent:
 
         #creation du dossier
         nom = "Stent_" + str(self.constructeur) + "_" + str(self.model) + "_" + str(self.diametre) + "_" + str(self.longueur)
-        path = "export/"+nom+"/"
+        path = os.path.join("export",nom,"")
         if not os.path.exists(path):
             os.makedirs(path)
                 
-        doc.write(path+nom+".iges")
-        print("fichier exporté")
+        doc.write(path,nom+"_CAO.iges")
+        print("Fichier exporté")
 
     

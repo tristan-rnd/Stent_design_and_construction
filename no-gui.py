@@ -25,7 +25,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('Constructeur', help="Constructeur du stent (Terumo)")
 parser.add_argument('Modele', help="Modele du stent (Synergy)")
 parser.add_argument('Diametre', type=float, help="Diametre du stent (en mm)")
-parser.add_argument('Longueur', type=float, help="Longueur du stent (en mm)")
+parser.add_argument('Longueur', type=int, help="Longueur du stent (en mm)")
 parser.add_argument('-v', '--verbose', action='store_true', help="Affiche les caractéristiques retenus pour le stent")
 parser.add_argument('-h', '--help', action='help', help="Affiche l'aide et termine le programme")
 args = parser.parse_args()

@@ -35,7 +35,7 @@ def fenetre():
     
     # Image en arriere plan
     try:
-        image = Image.open("assets/fond.png")
+        image = Image.open(Path("assets/fond.png"))
         img_width, img_height = image.size
         ratio = min(width / img_width, height / img_height)
         new_size = (int(img_width * ratio), int(img_height * ratio))
@@ -90,16 +90,16 @@ def choisir_fichier():
 
 # Fonction pour demander à l'utilisateur d'entrer une longueur en mm
 def demander_longueur():
-    global longueur_label, ok_bouton
-    longueur_mm = simpledialog.askinteger("Longueur en mm", "Entrez la longueur en mm :")
+    global longueur_label, ok_bouton, fenetre
+    longueur_mm = simpledialog.askinteger("Longueur en mm", "Entrez la longueur en mm :", parent=fenetre)
     if longueur_mm is not None:
         longueur_label.config(text=f"Longueur : {longueur_mm} mm")
         activer_bouton_ok()
 
 # Fonction pour demander à l'utilisateur d'entrer le diametre en mm
 def demander_diametre():
-    global diametre_label, ok_bouton
-    diametre_mm = simpledialog.askfloat("Diamètre en mm", "Entrez le diamètre en mm :")
+    global diametre_label, ok_bouton, fenetre
+    diametre_mm = simpledialog.askfloat("Diamètre en mm", "Entrez le diamètre en mm :", parent=fenetre)
     if diametre_mm is not None:
         diametre_label.config(text=f"Diamètre : {diametre_mm} mm")
         activer_bouton_ok()
