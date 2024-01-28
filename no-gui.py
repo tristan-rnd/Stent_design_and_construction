@@ -1,3 +1,10 @@
+# --------------------------------------------------------------------------------
+# Auteurs : Nassim HAMRI & Tristan RENAUD
+# Date : Janvier 2024
+# 
+# Ce fichier est partie intégrante de Stent_design_and_construction écrit par les mêmes auteurs.
+# --------------------------------------------------------------------------------
+
 import argparse
 
 from classStent import Stent
