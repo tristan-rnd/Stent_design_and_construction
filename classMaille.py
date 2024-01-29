@@ -121,14 +121,14 @@ class Maille:
                     
                 elif nom_fichier_connecteur == 'Connecteur_haut.csv':
                     self.liste_connecteurs.append(tab_connecteur)
-                    for j in range(len(self.liste_connecteurs[i-1][:,0])-1):
+                    for j in range(len(self.liste_connecteurs[i][:,0])-1):
                         #debut arrete
-                        x_debut = self.liste_connecteurs[i-1][j,0]
-                        y_debut = self.liste_connecteurs[i-1][j,1]
+                        x_debut = self.liste_connecteurs[i][j,0]
+                        y_debut = self.liste_connecteurs[i][j,1]
 
                         #fin arrete
-                        x_fin = self.liste_connecteurs[i-1][j+1,0]
-                        y_fin = self.liste_connecteurs[i-1][j+1,1]
+                        x_fin = self.liste_connecteurs[i][j+1,0]
+                        y_fin = self.liste_connecteurs[i][j+1,1]
 
                         #ajout a la liste d'arrete
                         self.liste_aretes.append([ (x_debut, y_debut),(x_fin, y_fin) ])
