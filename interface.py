@@ -24,7 +24,9 @@ def fenetre():
     screen_width = fenetre.winfo_screenwidth()
     screen_height = fenetre.winfo_screenheight()
     width = int(screen_width * .33)
-    height = int(screen_height * .33)
+    height = int(screen_height * .5)
+    if height < 300:
+        height = 300
     
     center_x = int((screen_width - width) / 2)
     center_y = int((screen_height - height) / 2)
