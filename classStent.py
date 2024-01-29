@@ -15,8 +15,8 @@ class Stent:
     '''
     le stent est une liste de liste ou chaque liste correspond a une couronne
     '''
-    def __init__(self, constructeur, modele, longueur, diametre):
-        
+    def __init__(self, constructeur, modele, longueur, diametre, interface=None):
+        self.interface = interface
         #   TERUMO
         if constructeur == "Terumo" and modele in ["Synergy", "Ultimaster_Nagomi", "Ultimaster_Tansei"]:
             if longueur in [9, 12, 15, 18, 21, 24, 28, 33, 38, 44, 50]:
@@ -28,14 +28,23 @@ class Stent:
                         nbr_couronne = 10
                         
                 else:
-                    raise Exception("Le diamètre ne fait pas partie des diamètres autorisés.\n Le diamètre choisi était : {}".format(diametre))
+                    if self.interface == True:
+                        self.constructeur = 0
+                        return None
+                    else:
+                        raise Exception("Le diametre ne fait pas partie des diametres autorises.\n Le diametre choisi etait : {}".format(diametre))
+					
             else:
-                raise Exception("La longueur ne fait pas partie des longueurs autorisées.\n La longueur choisie était : {}".format(longueur))
+                if self.interface == True:
+                    self.constructeur = 1
+                    return None
+                
+                else:
+                    raise Exception("La longueur ne fait pas partie des longueurs autorisees.\n La longueur choisie etait : {}".format(longueur))
 
         else:
             raise Exception('Le constructeur et/ou le modele n\'existe pas.\n Le constructeur choisi était : {}\n Le modèle choisi était : {}'.format(constructeur, modele))
 
-            
         #   AUTRES CONSTRUCTEURS    #
         #
         #

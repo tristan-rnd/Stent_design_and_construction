@@ -25,8 +25,6 @@ def fenetre():
     screen_height = fenetre.winfo_screenheight()
     width = int(screen_width * .33)
     height = int(screen_height * .5)
-    if height < 300:
-        height = 300
     
     center_x = int((screen_width - width) / 2)
     center_y = int((screen_height - height) / 2)
@@ -131,12 +129,35 @@ def action_ok():
     messagebox.showinfo("Stent terminé", "Le stent a été exporté.")
     fenetre.deiconify()
 
+def erreur(msg):
+    # Création de la fenêtre 
+    fenetre = tk.Tk()
+    fenetre.title("Erreur")
+
+    # Création d'un widget Label (étiquette) pour afficher le texte
+    etiquette = tk.Label(fenetre, text=msg)
+
+    # Placement du widget Label dans la fenêtre
+    etiquette.pack(padx=10, pady=10)
+
+    # Lancement de la boucle principale Tkinter
+    fenetre.mainloop()
+	
 def principale(constructeur, modele, longueur, diametre):
     
-    stent1 = Stent(constructeur, modele, longueur, diametre)
-    #stent1.Affichage()
-    stent1.PrintCaracteristique()
-    stent1.ecriture_CSV()
-    stent1.ecriture()
+    stent1 = Stent(constructeur, modele, longueur, diametre, True)
+    print()
+    if stent1.constructeur == 0:
+        erreur("Le diamètre ne fait pas partie des diamètres autorisés")
 
+    elif stent1.constructeur == 1:
+        erreur("La longueur ne fait pas partie des longueurs autorisées")
+        
+    else:
+        #stent1.Affichage()
+        stent1.PrintCaracteristique()
+        stent1.ecriture_CSV()
+        stent1.ecriture()
+
+    
 fenetre()
