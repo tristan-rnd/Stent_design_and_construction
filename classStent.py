@@ -124,11 +124,13 @@ class Stent:
 
             for i in range(len(self.liste_couronne)):
                 for j in range(len(self.liste_couronne[i].liste_maille)):
-                    csv_writer.writerow([self.liste_couronne[i].liste_maille[j].tab_maille_point[:,0], self.liste_couronne[i].liste_maille[j].tab_maille_point[:,1]])
+                    for k in range(len(self.liste_couronne[i].liste_maille[j].tab_maille_point)):
+                        csv_writer.writerow([self.liste_couronne[i].liste_maille[j].tab_maille_point[k,0], self.liste_couronne[i].liste_maille[j].tab_maille_point[k,1]])
 
                     for ii in range(len(self.liste_couronne[i].liste_maille[j].liste_connecteurs)):
                         if (len(self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii])!=0):
-                            csv_writer.writerow([self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii][:,0], self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii][:,1]])
+                            for jj in range(len(self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii])):
+                                csv_writer.writerow([self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii][jj,0], self.liste_couronne[i].liste_maille[j].liste_connecteurs[ii][jj,1]])
                             
     def ecriture(self):
         "Ecriture d'un fichier IGES a partir des aretes"
