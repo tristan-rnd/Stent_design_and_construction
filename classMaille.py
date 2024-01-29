@@ -115,6 +115,7 @@ class Maille:
                         self.liste_connecteurs.append([])
                     
                 elif nom_fichier_connecteur == 'Connecteur_gauche.csv':
+                    self.liste_connecteurs.append([])
                     x_largeur_d = max(tab_connecteur[:,0])
                     y_longueur_cd = tab_connecteur[np.argmax(tab_connecteur[:,0]), 1]
                     
