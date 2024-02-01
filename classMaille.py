@@ -42,19 +42,20 @@ class Maille:
         self.tab_maille_point = np.zeros( (len(tab[:,0]), 2) )
         self.tab_maille_point[:,:] = tab[:,:]
         #calcul echelle
-        tab_connecteur = np.genfromtxt(os.path.normpath(os.path.join(path,"connecteur","Connecteur_droit.csv")), delimiter=',', skip_header = 1)
+        tab_connecteur = np.genfromtxt(os.path.normpath(os.path.join(path,"Connecteurs","Connecteur_droit.csv")), delimiter=',', skip_header = 1)
         
-        #x
+        #echelle x
         self.ex = longueur / (nbr_couronne*(abs(np.max(tab[:,0])-np.min(tab[:,0])) + abs(np.max(tab_connecteur[:,0])-np.min(tab_connecteur[:,0])) ))
 
-        #y
+        #echelle y
         self.ey = np.pi * diametre / (nbr_maille*abs(np.max(tab[:,1])-np.min(tab[:,1])))
 
+        #mise à l'échelle en x et y
         self.tab_maille_point[:,0] = self.tab_maille_point[:,0] * self.ex
         self.tab_maille_point[:,1] = self.tab_maille_point[:,1] * self.ey
         
         #recupere les fichier des connecteurs
-        dossier = os.path.normpath(os.path.join(path,"connecteur"))
+        dossier = os.path.normpath(os.path.join(path,"Connecteurs"))
         if os.path.exists(dossier):
             nom_fichier = []
             for fichier in os.listdir(dossier):
@@ -63,6 +64,7 @@ class Maille:
                     nom_fichier.append(chemin_fichier)
         else:
             print("Le dossier n'existe pas.")
+            
         if len(nom_fichier) == 4:
             x_largeur_f = 0
             x_largeur_d = 0
@@ -73,10 +75,11 @@ class Maille:
             for i in range(len(nom_fichier)):
                 #initialisation connecteur
                 tab_connecteur = np.genfromtxt(nom_fichier[i], delimiter=',', skip_header = 1)
+                #mise à l'échelle en x et y
                 tab_connecteur[:,0] = tab_connecteur[:,0]*self.ex
                 tab_connecteur[:,1] = tab_connecteur[:,1]*self.ey
                 
-                #calcul longueur et largeur de maille
+                
                 nom_fichier_connecteur = os.path.basename(os.path.normpath(nom_fichier[i]))
                 if nom_fichier_connecteur == 'Connecteur_bas.csv':
                     self.liste_connecteurs.append(tab_connecteur)
@@ -97,7 +100,8 @@ class Maille:
                 elif nom_fichier_connecteur == 'Connecteur_droit.csv':
                     x_largeur_f = max(tab_connecteur[:,0])
                     y_longueur_cf = tab_connecteur[np.argmax(tab_connecteur[:,0]), 1]
-
+                    
+                    #condition couronne finale = pas de connecteur droit
                     if(fin==False):
                         self.liste_connecteurs.append(tab_connecteur)
                         for j in range(len(self.liste_connecteurs[i][:,0])-1):
@@ -115,6 +119,7 @@ class Maille:
                         self.liste_connecteurs.append([])
                     
                 elif nom_fichier_connecteur == 'Connecteur_gauche.csv':
+                    #connecteur gauche vide car égal au droit
                     self.liste_connecteurs.append([])
                     x_largeur_d = max(tab_connecteur[:,0])
                     y_longueur_cd = tab_connecteur[np.argmax(tab_connecteur[:,0]), 1]
@@ -134,7 +139,9 @@ class Maille:
                         self.liste_aretes.append([ (x_debut, y_debut),(x_fin, y_fin) ])
                         
                     y_longueur_d = tab_connecteur[np.argmax(tab_connecteur[:,0]), 1]
-                    
+            
+            
+            #calcul de longeurs caractéristiques
             self.largeur =  abs(x_largeur_f - x_largeur_d)
             self.longueur = abs(y_longueur_f - y_longueur_d)
             self.longueur_c = abs(y_longueur_cf - y_longueur_cd)   

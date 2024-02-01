@@ -14,7 +14,7 @@ from pathlib import Path
 
 
 # Fonction pour créer et afficher la fenêtre principale
-def fenetre():
+def Fenetre():
      
     global fichier_label, longueur_label, diametre_label, ok_bouton, fenetre
 
@@ -25,6 +25,10 @@ def fenetre():
     screen_height = fenetre.winfo_screenheight()
     width = int(screen_width * .33)
     height = int(screen_height * .5)
+    if height<300:
+        height = 300
+    if width<300:
+        width = 300
     
     center_x = int((screen_width - width) / 2)
     center_y = int((screen_height - height) / 2)
@@ -52,30 +56,30 @@ def fenetre():
     fichier_label.pack(padx=10, pady=10)
 
     # Bouton pour ouvrir la boîte de dialogue de sélection de fichier
-    ouvrir_bouton = tk.Button(fenetre, text="Sélectionner un fichier", command=choisir_fichier)
+    ouvrir_bouton = tk.Button(fenetre, text="Sélectionner un fichier", command=Choisir_fichier)
     ouvrir_bouton.pack(padx=10, pady=10)
     
     # Bouton pour demander le diamètre en mm
     diametre_label = tk.Label(fenetre, text="")
     diametre_label.pack(padx=10, pady=10)
-    diametre_bouton = tk.Button(fenetre, text="Demander le diamètre en mm", command=demander_diametre)
+    diametre_bouton = tk.Button(fenetre, text="Demander le diamètre en mm", command=Demander_diametre)
     diametre_bouton.pack(padx=10, pady=10)
     
     # Bouton pour demander la longueur en mm
     longueur_label = tk.Label(fenetre, text="")
     longueur_label.pack(padx=10, pady=10)
-    longueur_bouton = tk.Button(fenetre, text="Demander la longueur en mm", command=demander_longueur)
+    longueur_bouton = tk.Button(fenetre, text="Demander la longueur en mm", command=Demander_longueur)
     longueur_bouton.pack(padx=10, pady=10)
 
     # Bouton OK (initialement désactivé)
-    ok_bouton = tk.Button(fenetre, text="OK", command=action_ok, state=tk.DISABLED)
+    ok_bouton = tk.Button(fenetre, text="OK", command=Action_ok, state=tk.DISABLED)
     ok_bouton.pack(padx=10, pady=10)
 
     # Démarrer la boucle principale de l'application
     fenetre.mainloop()
 
 # Fonction pour ouvrir la boîte de dialogue de sélection de fichier
-def choisir_fichier():
+def Choisir_fichier():
     global fichier_label, ok_bouton
     fichier = filedialog.askopenfilename(initialdir="Mailles/", title="Sélectionner un fichier")
     if fichier:
@@ -86,26 +90,26 @@ def choisir_fichier():
         relative_path = absolute_path.relative_to(parent_directory)
     
         fichier_label.config(text=relative_path)
-        activer_bouton_ok()
+        Activer_bouton_ok()
 
 # Fonction pour demander à l'utilisateur d'entrer une longueur en mm
-def demander_longueur():
+def Demander_longueur():
     global longueur_label, ok_bouton, fenetre
     longueur_mm = simpledialog.askinteger("Longueur en mm", "Entrez la longueur en mm :", parent=fenetre)
     if longueur_mm is not None:
         longueur_label.config(text=f"Longueur : {longueur_mm} mm")
-        activer_bouton_ok()
+        Activer_bouton_ok()
 
 # Fonction pour demander à l'utilisateur d'entrer le diametre en mm
-def demander_diametre():
+def Demander_diametre():
     global diametre_label, ok_bouton, fenetre
     diametre_mm = simpledialog.askfloat("Diamètre en mm", "Entrez le diamètre en mm :", parent=fenetre)
     if diametre_mm is not None:
         diametre_label.config(text=f"Diamètre : {diametre_mm} mm")
-        activer_bouton_ok()
+        Activer_bouton_ok()
 
 # Fonction pour activer le bouton OK
-def activer_bouton_ok():
+def Activer_bouton_ok():
     global fichier_label, longueur_label, diametre_label, ok_bouton
     if fichier_label.cget("text") and longueur_label.cget("text") and diametre_label.cget("text"):
         ok_bouton.config(state=tk.NORMAL)
@@ -113,7 +117,7 @@ def activer_bouton_ok():
         ok_bouton.config(state=tk.DISABLED)
 
 # Fonction pour effectuer une action lorsque le bouton OK est cliqué
-def action_ok():
+def Action_ok():
     global fichier_label, longueur_label, diametre_label, fenetre
     fichier = fichier_label.cget("text")
     longueur = longueur_label.cget("text")
@@ -123,41 +127,42 @@ def action_ok():
     fichier = Path(fichier)
     constructeur = fichier.parent.parent.name
     modele = fichier.parent.name
-    principale(constructeur, modele, longueur, diametre)
+    Principale(constructeur, modele, longueur, diametre)
     
     fenetre.withdraw()
     messagebox.showinfo("Stent terminé", "Le stent a été exporté.")
     fenetre.deiconify()
 
-def erreur(msg):
+def Erreur(msg):
     # Création de la fenêtre 
-    fenetre = tk.Tk()
-    fenetre.title("Erreur")
+    fenetre_error = tk.Tk()
+    fenetre_error.title("Erreur")
 
     # Création d'un widget Label (étiquette) pour afficher le texte
-    etiquette = tk.Label(fenetre, text=msg)
+    etiquette = tk.Label(fenetre_error, text=msg)
 
     # Placement du widget Label dans la fenêtre
     etiquette.pack(padx=10, pady=10)
 
     # Lancement de la boucle principale Tkinter
-    fenetre.mainloop()
+    fenetre_error.mainloop()
 	
-def principale(constructeur, modele, longueur, diametre):
+def Principale(constructeur, modele, longueur, diametre):
     
-    stent1 = Stent(constructeur, modele, longueur, diametre, True)
+    stent = Stent(constructeur, modele, longueur, diametre, True)
     print()
-    if stent1.constructeur == 0:
-        erreur("Le diamètre ne fait pas partie des diamètres autorisés")
+    if stent.erreur == 1:
+        Erreur("Le diamètre ne fait pas partie des diamètres autorisés")
+        stent = None
 
-    elif stent1.constructeur == 1:
-        erreur("La longueur ne fait pas partie des longueurs autorisées")
+    elif stent.erreur == 2:
+        Erreur("La longueur ne fait pas partie des longueurs autorisées")
+        stent = None
         
     else:
-        #stent1.Affichage()
-        stent1.PrintCaracteristique()
-        stent1.ecriture_CSV()
-        stent1.ecriture()
-
+        #stent.Affichage()
+        stent.PrintCaracteristique()
+        stent.Ecriture_CSV()
+        stent.Ecriture()
     
-fenetre()
+Fenetre()

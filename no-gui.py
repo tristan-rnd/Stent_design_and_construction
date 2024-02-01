@@ -8,15 +8,16 @@
 import argparse
 
 from classStent import Stent
-def principale(constructeur, modele, longueur, diametre, verbose):
+def Principale(constructeur, modele, longueur, diametre, verbose, plot_stent):
 
         
     stent1 = Stent(constructeur, modele, longueur, diametre)
-    #stent1.Affichage()
+    if plot_stent:
+        stent1.Affichage()
     if verbose: 
         stent1.PrintCaracteristique()
-    stent1.ecriture_CSV()
-    stent1.ecriture()
+    stent1.Ecriture_CSV()
+    stent1.Ecriture()
     
 parser = argparse.ArgumentParser(
                     prog='Construction de stent',
@@ -26,8 +27,9 @@ parser.add_argument('Constructeur', help="Constructeur du stent (Terumo)")
 parser.add_argument('Modele', help="Modele du stent (Synergy)")
 parser.add_argument('Diametre', type=float, help="Diametre du stent (en mm)")
 parser.add_argument('Longueur', type=int, help="Longueur du stent (en mm)")
-parser.add_argument('-v', '--verbose', action='store_true', help="Affiche les caractéristiques retenus pour le stent")
+parser.add_argument('-v', '--verbose', action='store_true', help="Affiche les caracteristiques retenus pour le stent")
+parser.add_argument('-p', '--plot', action='store_true', help="Trace le stent construit dans une nouvelle fenetre")
 parser.add_argument('-h', '--help', action='help', help="Affiche l'aide et termine le programme")
 args = parser.parse_args()
 
-principale(args.Constructeur, args.Modele, args.Longueur, args.Diametre, args.verbose)
+Principale(args.Constructeur, args.Modele, args.Longueur, args.Diametre, args.verbose, args.plot)
