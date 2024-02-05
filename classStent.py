@@ -86,7 +86,22 @@ class Stent:
             for ii in range(len(self.liste_couronne[i].liste_aretes_couronne)):
                 self.liste_aretes_total.append(self.liste_couronne[i].liste_aretes_couronne[ii])       
             
+        #suppression des doublons dans la liste d'aretes
+        # Créez un ensemble pour stocker les tuples déjà rencontrés
+        tuples_deja_vus = []
+
+        for sous_liste in self.liste_aretes_total:
+
+            # Si l'ensemble de tuples n'a pas déjà été rencontré
+            if sous_liste not in tuples_deja_vus:
+                self.liste_aretes.append(sous_liste)
+                # Ajoutez l'ensemble de tuples à l'ensemble des tuples déjà rencontrés
+                tuples_deja_vus.append(sous_liste)
+ 
         print("Stent créé")
+        
+        
+        
         
     def PrintCaracteristique(self):
         print("Le manufacturier est: ", self.constructeur, "\nLe model est: ", self.model, "\nLe diametre est: ", self.diametre,"\nLa longueur est: ", self.longueur)
@@ -117,7 +132,7 @@ class Stent:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerow([['X1', 'Y1'], ['X2', 'Y2']])
 
-            for arrete in self.liste_aretes_total:
+            for arrete in self.liste_aretes:
                 csv_writer.writerow([arrete[0][0], arrete[0][1], arrete[1][0],arrete[1][1]])
 
         #ecriture dans un fichier des csv des points du stent
