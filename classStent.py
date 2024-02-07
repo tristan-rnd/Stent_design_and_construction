@@ -13,7 +13,8 @@ from igeswrite import Iges
 
 class Stent:
     '''
-    le stent est une liste de liste ou chaque liste correspond a une couronne
+    Un Stent contient une liste d'objets Couronne.
+    Des fonctions d'affichage et d'exportation sont egalement implementees.
     '''
     def __init__(self, constructeur, modele, longueur, diametre, interface=None):
         self.interface = interface
@@ -40,7 +41,7 @@ class Stent:
                     #Si on utilise l'invite de commande, on lance une exception qui arrête le programme.
                     else:
                         raise Exception("Le diametre ne fait pas partie des diametres autorises.\n Le diametre choisi etait : {}".format(diametre))
-					
+                    
             else:
                 if self.interface == True:
                     self.erreur = 2
@@ -85,18 +86,19 @@ class Stent:
                         
             for ii in range(len(self.liste_couronne[i].liste_aretes_couronne)):
                 self.liste_aretes_total.append(self.liste_couronne[i].liste_aretes_couronne[ii])       
-            
+        print("coucou")
         #suppression des doublons dans la liste d'aretes
         # Créez un ensemble pour stocker les tuples déjà rencontrés
-        tuples_deja_vus = []
+        tuples_deja_vus = set()
 
         for sous_liste in self.liste_aretes_total:
+            ensemble_de_tuples = str(sous_liste)
 
             # Si l'ensemble de tuples n'a pas déjà été rencontré
-            if sous_liste not in tuples_deja_vus:
+            if ensemble_de_tuples not in tuples_deja_vus:
                 self.liste_aretes.append(sous_liste)
                 # Ajoutez l'ensemble de tuples à l'ensemble des tuples déjà rencontrés
-                tuples_deja_vus.append(sous_liste)
+                tuples_deja_vus.add(ensemble_de_tuples)
  
         print("Stent créé")
         
@@ -104,7 +106,7 @@ class Stent:
         
         
     def PrintCaracteristique(self):
-        print("Le manufacturier est: ", self.constructeur, "\nLe model est: ", self.model, "\nLe diametre est: ", self.diametre,"\nLa longueur est: ", self.longueur)
+        print("Le manufacturier est: ", self.constructeur, "\nLe modele est: ", self.model, "\nLe diametre (mm) est: ", self.diametre,"\nLa longueur (mm) est: ", self.longueur)
 
     def Affichage(self):
         #Lance un affichage pyplot de l'ensemble des points
@@ -130,7 +132,7 @@ class Stent:
         #ecriture dans un fichier csv des arretes du stent
         with open(path + nom + "_segments.csv", 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
-            csv_writer.writerow([['X1', 'Y1'], ['X2', 'Y2']])
+            csv_writer.writerow(['X1', 'Y1', 'X2', 'Y2'])
 
             for arrete in self.liste_aretes:
                 csv_writer.writerow([arrete[0][0], arrete[0][1], arrete[1][0],arrete[1][1]])
@@ -138,7 +140,7 @@ class Stent:
         #ecriture dans un fichier des csv des points du stent
         with open(path + nom + "_points.csv", 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
-            csv_writer.writerow([['X', 'Y']])
+            csv_writer.writerow(['X', 'Y'])
 
             for i in range(len(self.liste_couronne)):
                 for j in range(len(self.liste_couronne[i].liste_maille)):
